@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kevin.dao.UserInfoDAO">
+
+    <select id="getUserJoinedId" parameterType="int" resultType="int">
+        SELECT clubid FROM clubjoined WHERE userid=#{userId}
+    </select>
+
+    <select id="getUserSchoolId" parameterType="int" resultType="int">
+        SELECT schoolid FROM user_info WHERE userid=#{userId}
+    </select>
+
+    <select id="getUserCommunityId" parameterType="int" resultType="int">
+        SELECT classid FROM user_info WHERE userid=#{userId}
+    </select>
+    <insert id="insertUserJoinedClub" >
+        INSERT ignore INTO clubjoined (userid,clubid) VALUES (#{userId},#{clubId})
+    </insert>
+    
+</mapper>

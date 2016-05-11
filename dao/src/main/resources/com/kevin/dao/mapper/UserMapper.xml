@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+         
+<mapper namespace="com.kevin.dao.UserDAO">
+    <insert id="insertUser" parameterType="User" keyProperty="id">
+        insert into user_info(
+        	username,
+            password,
+            aliasname,
+            token,
+            token_time)
+            values
+            (
+            #{username},
+            #{password},
+            #{aliasname},
+            #{token},
+            #{tokenTime})
+        </insert>
+
+    <resultMap id="userMap" type="com.kevin.model.User">
+        <id property="id" column="userid"/>
+        <result property="state" column="state"/>
+        <result property="nickname" column="nickname"/>
+        <result property="token" column="token"/>
+        <result property="tokenTime" column="token_time"/>
+        <result property="picPath" column="picpath"/>
+        <result property="sex" column="sex"/>
+
+    </resultMap>
+
+    <select id="finduserById" resultType="User" resultMap="userMap">
+        SELECT * FROM days_user
+    </select>
+
+    <select id="getUserIdByName" resultType="int">
+        select userid FROM user_info WHERE username = #{username} and password = #{password}
+    </select>
+
+    <update id="updateUser" parameterType="com.kevin.model.User">
+        UPDATE user_info
+        set nickname = #{nickname},
+            password = #{password},
+            token = #{token},
+            token_time = #{tokenTime},
+            picpath = #{picPath},
+            sex  = #{sex},
+            signature = #{signature}
+        WHERE userid = #{id}
+    </update>
+
+    <select id="getUserById" resultMap="userMap" parameterType="int">
+        SELECT * FROM user_info WHERE userid = #{id}
+    </select>
+
+    <select id="checkUserByName" resultType="int">
+        SELECT count(*) FROM user_info WHERE username = #{username} and password = #{password}
+    </select>
+
+    <select id="getTokenTimeByToken" resultType="date">
+        SELECT token_time from user_info WHERE token = #{token}
+    </select>
+
+    <select id="getUserByToken" resultMap="userMap">
+        SELECT * FROM user_info WHERE token = #{token}
+    </select>
+
+    <select id="getUserIdByToken" resultType="int">
+        SELECT userid FROM user_info WHERE token = #{token}
+    </select>
+
+    <select id="getAliasnameById" resultType="String">
+        SELECT aliasname FROM user_info WHERE userid = #{userid}
+    </select>
+</mapper>

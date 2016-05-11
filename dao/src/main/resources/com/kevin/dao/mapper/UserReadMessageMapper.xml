@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kevin.dao.UserReadMessageDAO">
+
+    <insert id="insertMessage" parameterType="UserReadMessage">
+        INSERT ignore INTO user_vote_message (userid,msgid,is_vote,is_read,is_notice,is_push,areaid) VALUES (#{userId},#{msgId},#{isVote},#{isRead},#{isNotice},#{isPush},#{areaId})
+    </insert>
+
+    <resultMap id="userReadMessageMap" type="UserReadMessage">
+        <id property="msgId" column="msgid"/>
+        <result property="areaId" column="desid"/>
+        <!--<association property="userId" column="desid" javaType="int" select="getGroupUser"/>-->
+    </resultMap>
+
+    <select id="generateUserReadMessage" parameterType="int" resultMap="userReadMessageMap">
+        SELECT msgid,desid FROM noticemessage where msgid=#{msgId}
+    </select>
+
+    <select id="getGroupUserList" parameterType="int" resultType="int">
+        SELECT userid FROM
+        <choose>
+            <when test="_parameter > 1000000">
+                clubjoined WHERE clubid
+            </when>
+            <when test="_parameter > 100000 and _parameter &lt; 1000000">
+                user_info where classid
+            </when>
+            <when test="_parameter > 10000 and _parameter &lt; 100000">
+                user_info where schoolid
+            </when>
+            <otherwise>
+                user_info where universityid
+            </otherwise>
+        </choose>
+        = #{_parameter};
+    </select>
+
+    <select id="isUserRead" resultType="boolean">
+        SELECT COUNT(*) is_read FROM user_vote_message WHERE userid=#{userId} AND msgid=#{msgId} AND is_read=true
+    </select>
+
+    <select id="isUserNotice" resultType="boolean">
+        SELECT COUNT(*) is_notice FROM user_vote_message WHERE userid=#{userId} AND msgid=#{msgId} AND is_notice=TRUE
+    </select>
+
+    <update id="updateMessage">
+        UPDATE user_vote_message
+        <choose>
+            <when test="praise != 0">
+                set is_vote = TRUE
+            </when>
+            <when test="read != 0">
+                SET is_read = TRUE
+            </when>
+            <otherwise>
+                SET is_notice = true
+            </otherwise>
+        </choose>
+        where msgid=#{msgId} and userid=#{userId}
+    </update>
+</mapper>

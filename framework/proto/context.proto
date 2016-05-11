@@ -1,0 +1,39 @@
+package com.kevin.framework.generate.context;
+
+message ApiContextMessage {
+
+	/*
+	 * ³¤Ð§SessionID
+	 */
+	optional string ltsId = 1;
+	optional string serialNo = 2;
+	optional string mac = 3;
+	optional string imei = 4;
+	optional string imsi = 5;
+	optional string resolution = 6;
+	optional string density = 7;
+	optional int32 screenWidth = 8;
+	optional int32 screenHeight = 9;
+	optional string deviceId = 10;
+	optional string producer = 11;
+	optional string model = 12;
+	optional string firmware = 13;
+	optional string osType = 14;
+	optional string osVer = 15;
+	optional string udid = 16;
+	optional int32 clientVer = 17;
+	optional string ttid = 18;
+	optional int64 firstInstalledAt = 19;
+	optional int64 lastInstalledAt = 20;
+	optional int64 firstActivatedAt = 21;
+	optional string network = 22;
+	optional string ip = 23;
+	optional int64 uid = 24;
+	optional int64 lastLoginAt = 25;
+	optional string appKey = 26;
+	optional string taoSid = 27;
+	optional string taoEcode = 28;
+	optional string location = 29;
+	optional string installPath = 30;
+	optional string ttidOriginal = 31;
+}

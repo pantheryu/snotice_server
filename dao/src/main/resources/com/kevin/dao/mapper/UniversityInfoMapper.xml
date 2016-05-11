@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kevin.dao.UniversityInfoDAO">
+    <resultMap id="UniversityMap" type="UniversityInfo">
+
+        <id property="id" column="university_id"/>
+        <result property="name" column="university_name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+        <result property="picPath" column="picpath"/>
+        <collection property="schoolInfoList" javaType="ArrayList" column="university_id" ofType="SchoolInfo" select="getSchools">
+        </collection>
+
+        <collection property="clubInfoList" javaType="ArrayList" column="university_id" ofType="ClubInfo" select="getClubs">
+        </collection>
+
+    </resultMap>
+
+
+    <select id="getSchoolInfo" resultType="SchoolInfo">
+        SELECT * FROM school_info where university_id=#{universityId}
+    </select>
+
+    <resultMap id="communityMap" type="CommunityInfo">
+        <id property="id" column="community_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+    </resultMap>
+
+    <select id="getCommunityInfo" parameterType="java.util.Map" resultMap="communityMap" resultType="CommunityInfo">
+        SELECT * FROM community_info where school_id=#{schoolId} AND university_id=#{universityId}
+    </select>
+
+    <select id="getClubInfo" parameterType="int" resultType="ClubInfo">
+        SELECT * FROM club_info where university_id=#{id}
+    </select>
+
+    <select id="getUniversityInfo" resultType="UniversityInfo" resultMap="UniversityMap">
+        SELECT * FROM university_info WHERE university_id=#{universityId}
+    </select>
+
+
+    <resultMap id="schoolMap" type="SchoolInfo">
+        <id property="id" column="school_id"/>
+        <result property="name" column="school_name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+        <collection property="communityInfoList" javaType="ArrayList" column="{schoolId=school_id,universityId=university_id}" ofType="CommunityInfo" select="getCommunityInfo">
+            <!--<id property="id" column="community_id"/>-->
+            <!--<result property="name" column="name"/>-->
+            <!--<result property="description" column="description"/>-->
+            <!--<result property="memberNums" column="members"/>-->
+        </collection>
+        <!--<association property="cummunityInfoList" javaType="ArrayList" column="{school_id}" select="getCommunitys"/>-->
+    </resultMap>
+
+    <!--<resultMap id="communityMap" type="CommunityInfo">-->
+        <!--<id property="id" column="community_id"/>-->
+        <!--<result property="name" column="name"/>-->
+        <!--<result property="description" column="description"/>-->
+        <!--<result property="memberNums" column="members"/>-->
+    <!--</resultMap>-->
+
+    <!--<select id="getCommunitys" resultType="CommunityInfo" parameterType="java.util.Map" resultMap="communityMap">-->
+        <!--SELECT * FROM community_info where school_id=#{school_id} ;-->
+    <!--</select>-->
+
+    <select id="getSchools" resultMap="schoolMap" resultType="SchoolInfo">
+        SELECT * FROM school_info WHERE university_id=#{university_id}
+    </select>
+
+    <resultMap id="clubMap" type="ClubInfo">
+        <id property="id" column="club_id"/>
+        <result property="name" column="club_name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+        <result property="clubCategory" column="category_id"/>
+    </resultMap>
+
+    <select id="getClubs" resultMap="clubMap" resultType="ClubInfo">
+        SELECT * FROM club_info WHERE university_id=#{universityId}
+    </select>
+
+</mapper>

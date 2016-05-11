@@ -1,0 +1,6 @@
+package com.kevin.framework.generate.test;
+
+message testPara {
+    required string a = 1;
+    required string b = 2;
+}

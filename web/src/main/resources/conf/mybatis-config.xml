@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration 
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+        <!-- 命名空间 -->
+    <typeAliases>
+        <typeAlias alias="User" type="com.kevin.model.User"/>
+        <typeAlias alias="BaseNoticeMessage" type="com.kevin.model.message.BaseNoticeMessage"/>
+        <typeAlias type="com.kevin.model.info.UniversityInfo" alias="UniversityInfo"/>
+        <typeAlias type="com.kevin.model.info.SchoolInfo" alias="SchoolInfo"/>
+        <typeAlias type="com.kevin.model.info.ClubInfo" alias="ClubInfo"/>
+        <typeAlias type="com.kevin.model.info.spider.LectureInfo" alias="LectureInfo"/>
+        <typeAlias type="com.kevin.model.info.CommunityInfo" alias="CommunityInfo"/>
+        <typeAlias type="com.kevin.model.info.BaseGroupInfo" alias="BaseGroupInfo"/>
+        <typeAlias type="com.kevin.model.user.UserJoinedGroup" alias="UserJoinedGroup"/>
+        <typeAlias type="com.kevin.model.UserReadMessage" alias="UserReadMessage"/>
+        <typeAlias type="com.kevin.model.message.NoticeMessageWithCount" alias="NoticeMessageWithCount"/>
+
+     </typeAliases>
+    <!-- 映射map -->
+
+</configuration>

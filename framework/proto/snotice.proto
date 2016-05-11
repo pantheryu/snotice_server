@@ -1,0 +1,100 @@
+package com.kevin.framework.generate.packet;
+
+//option java_package = "com.alibaba.base.wap.api.message";
+//option java_outer_classname = "CommPackageProtos";
+
+/**
+ * �� ��: CommPackageProtos<br/>
+ * �� ��: �ͻ��˵�����˵�ͨ��Э��Protos<br/>
+ * �� ��: ��ΰ��<br/>
+ * �� ��: 2015��8��18��<br/>
+ *
+ * �� ʷ: (�汾) ���� ʱ�� ע��
+ */
+
+//Api����������ݶ���
+message ApiCallPacket {
+    required int32 requestNumber = 1;
+    required string apiName = 2;
+    required string methodName = 3;
+    repeated bytes parameter = 4;
+}
+
+//Api���÷������ݶ���
+message ApiResultPacket {
+    required int32 requestNumber = 1; // ��ApiCallPacket.request_no��Ӧ
+    required int32 errorCode = 2;
+    optional string errorMessage = 3;
+    optional bytes returnValue = 4;
+}
+
+//һ��Api�������ݰ�
+message ApiRequestPacket {
+    repeated ApiCallPacket api_calls = 1; // �����õ�
+    optional string longTermSessionID = 2; // ��ЧSessionID
+    optional HandShakePacket handShake = 3; // ������Ϣ�������û��ltsid��������Ӵ���Ϣ���������֣���ȡltsid�������ltsid�������Ϣ����.
+    optional RequestHeaderPacket packetHeader = 4; // ÿ��api���ã���ѡ���
+
+    optional int32 api_ver = 5 default 1; // ��ʾЭ��汾�ţ� �汾2����������ǩ
+    optional int64 timeStamp = 6; // ��ǰʱ���, UTC 1970-1-1 0ʱ������ʱ�̵ĺ�����
+
+    optional string app_key = 101; // ��api��appKey
+    optional string signInfo = 102; // ǩ����, StringUtils.upperCase(DigestUtils.md5Hex(appSecret + new String(serializer.serialize(apiRequestSignData), "ISO-8859-1") + appSecret))
+}
+
+message ApiRequestSignData {
+    repeated ApiCallPacket api_calls = 1;
+    optional string longTermSessionID = 2;
+    optional HandShakePacket handShake = 3;
+    optional RequestHeaderPacket packetHeader = 4;
+    optional int32 api_ver = 5;
+    optional int64 timeStamp = 6;
+}
+
+message ApiResponsePacket {
+    repeated ApiResultPacket api_results = 1;
+    optional string longTermSessionID = 2; // ���������û��ltsid���������֣��򴴽���ltsid�����򣬷��������е�ltsid
+    optional int32 error_code = 3;
+    optional string error_message = 4;
+}
+
+/*
+ * ������Ϣ��������ЧSessionʹ��.
+ */
+message HandShakePacket {
+    optional string serial_no = 1;
+    optional string mac = 2;
+    optional string imei = 3;
+    optional string imsi = 4;
+    optional string resolution = 5;
+    optional string density = 6;
+    optional int32 screen_width = 7;
+    optional int32 screen_height = 8;
+}
+
+message RequestHeaderPacket {
+    optional string device_id = 1;
+    optional string producer = 2;
+    optional string model = 3;
+    optional string firmware = 4;
+    optional string os_type = 5;
+    optional string os_ver = 6;
+    optional string udid = 7; // ����iOS����UDID������Android����AndroidId
+    optional int32 client_ver = 8; // �ͻ��˰汾��
+    optional string ttid = 9; // ������
+    optional int64 first_installed_at = 10; // ���ΰ�װʱ��
+    optional int64 last_installed_at = 11; // �ϴΰ�װʱ��
+    optional int64 first_activated_at = 12; // ��һ������ʱ��
+    optional string network = 13; // ���������ʽ
+    optional string location = 14; // λ����Ϣ, JSON��ʽ
+    optional string app_key = 15; // Ӧ�õ�appKey
+}
+
+message LivePicMessage{
+    required string picStoreUrl = 1;
+    required string picInfoUrl = 2;
+}
+
+message LivePicMessageList{
+    repeated LivePicMessage picList = 1;
+}

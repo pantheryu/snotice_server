@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kevin.dao.NoticeMessageDAO">
+    <resultMap id="noticeMsgMap" type="BaseNoticeMessage">
+        <id property="msgId" column="msgid"/>
+        <result property="userId" column="userid"/>
+        <result property="desId" column="desid"/>
+        <result property="sendDate" javaType="java.util.Date" column="send_date" jdbcType="TIMESTAMP"/>
+        <result property="title" column="title"/>
+        <result property="detail" column="detail"/>
+        <result property="date" javaType="java.util.Date" column="date" jdbcType="TIMESTAMP"/>
+        <result property="place" column="place"/>
+        <result property="categoryId" column="categoryid"/>
+        <result property="up" column="up"/>
+        <result property="down" column="down"/>
+        <result property="picPath" column="picpath"/>
+        <result property="url" column="url"/>
+        <result property="urlMd5" column="urlMd5"/>
+        <association property="isVoted" column="{userId=userid, msgId=msgid}" javaType="boolean" select="selectVoted"/>
+        <association property="userName" column="userid" javaType="string" select="selectUserInfo"/>
+        <association property="categoryName" column="categoryid" javaType="string" select="selectCategoryName"/>
+    </resultMap>
+
+
+    <select id="getNoticeMessage" resultType="BaseNoticeMessage" resultMap="noticeMsgMap">
+        SELECT * FROM noticemessage WHERE desid=#{areaId}
+        <if test="categoryId != 10">
+            and categoryid=#{categoryId}
+        </if>
+        order by msgid desc limit 20 offset #{pageNum,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertNoticeMessage" parameterType="BaseNoticeMessage" useGeneratedKeys="true" keyProperty="msgid">
+        INSERT ignore INTO noticemessage(userid,title,detail,date,place,categoryid,up,down,desid,send_date,picpath,url,urlMd5)
+        VALUES (#{userId},#{title},#{detail},#{date},#{place},#{categoryId},#{up},#{down},#{desId},#{sendDate},#{picPath},#{url},#{urlMd5})
+    </insert>
+
+    <insert id="insertNoticePraise">
+
+        INSERT INTO user_vote_message (userid,msgid,is_vote) VALUES (#{userId},#{msgId},1)
+    </insert>
+
+    <update id="updateNoticeMessage">
+        UPDATE noticemessage
+        <choose>
+            <when test="praise > 0">
+                SET up = up+1
+            </when>
+            <otherwise>
+                SET down = down+1
+            </otherwise>
+        </choose>
+        WHERE msgid=#{msgId}
+    </update>
+
+    <select id="selectUserInfo" resultType="string" parameterType="int">
+        SELECT nickname FROM user_info WHERE userid=#{userId}
+    </select>
+
+    <select id="selectCategoryName" resultType="string" parameterType="int">
+        SELECT name FROM category WHERE categoryid=#{categoryId}
+    </select>
+
+
+    <select id="selectVoted" resultType="boolean">
+        SELECT COUNT(1) is_vote FROM user_vote_message WHERE userid=#{userId} and msgid=#{msgId} and is_vote=TRUE
+    </select>
+
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*) msgid FROM noticemessage where desid=#{areaId}
+        <if test="categoryId != 10">
+            and categoryid=#{categoryId}
+        </if>
+    </select>
+
+
+        <resultMap id="CountMsgCount" type="NoticeMessageWithCount">
+            <id property="msgId" column="msgid"/>
+            <result property="userId" column="userid"/>
+            <result property="desId" column="desid"/>
+            <result property="sendDate" javaType="java.util.Date" column="send_date" jdbcType="TIMESTAMP"/>
+            <result property="title" column="title"/>
+            <result property="detail" column="detail"/>
+            <result property="date" javaType="java.util.Date" column="date" jdbcType="TIMESTAMP"/>
+            <result property="place" column="place"/>
+            <result property="categoryId" column="categoryid"/>
+            <result property="up" column="up"/>
+            <result property="down" column="down"/>
+            <result property="picPath" column="picpath"/>
+            <association property="userName" column="userid" javaType="string" select="selectUserInfo"/>
+            <association property="categoryName" column="categoryid" javaType="string" select="selectCategoryName"/>
+            <association property="isVoted" column="{userId=userid, msgId=msgid}" javaType="boolean" select="selectVoted"/>
+            <association property="totalCount" column="msgid" javaType="int" select="selectTotalCount"/>
+            <association property="readCount" column="msgid" javaType="int" select="selectReadCount"/>
+            <association property="noticeCount" column="msgid" javaType="int" select="selectNoticeCount"/>
+        </resultMap>
+
+    <select id="getUserSendMessage" resultType="NoticeMessageWithCount" resultMap="CountMsgCount">
+        SELECT * FROM noticemessage WHERE userid=#{userId}
+    </select>
+
+    <select id="getBaseNoticeMessageById" resultType="BaseNoticeMessage" resultMap="noticeMsgMap">
+        SELECT * FROM noticemessage WHERE msgid=#{msgId}
+    </select>
+
+    <select id="getUserRecvMessage" resultType="int" >
+        SELECT * FROM user_vote_message WHERE userid=#{userId} and is_push=true;
+    </select>
+
+    <select id="selectTotalCount" resultType="int">
+        SELECT count(*) msgid FROM user_vote_message WHERE msgid=#{msgId}
+    </select>
+    <select id="selectReadCount" resultType="int">
+        SELECT count(*) is_read FROM user_vote_message WHERE msgid=#{msgId} and is_read=true
+    </select>
+    <select id="selectNoticeCount" resultType="int">
+        SELECT count(*) is_notice FROM user_vote_message WHERE msgid=#{msgId} and is_notice=true
+    </select>
+
+    <select id="getAreaIdByMsgId" parameterType="int">
+         SELECT desid FROM noticemessage where msgid=#{msgId}
+    </select>
+
+</mapper>

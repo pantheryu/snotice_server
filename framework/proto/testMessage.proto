@@ -1,0 +1,20 @@
+package com.kevin.framework.generate.test;
+
+message ApiRestPacket {
+    required int32 reqNum = 1;
+    required int32 errCode = 2;
+    required string errMsg = 3;
+    optional bytes parameter = 4;
+}
+
+message ApiReqPacket {
+    required int32 reqNum = 1;
+    required string method_name = 2;
+    optional bytes parameter = 3;
+}
+
+message ApiTest{
+    required int32 reqNum = 1;
+    required string method_name = 2;
+    repeated bytes parameter = 3;
+}

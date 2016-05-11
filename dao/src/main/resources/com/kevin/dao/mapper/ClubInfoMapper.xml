@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kevin.dao.ClubInfoDAO">
+
+    <resultMap id="clubMap" type="ClubInfo">
+        <id property="id" column="club_id"/>
+        <result property="name" column="club_name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+        <result property="clubCategory" column="category_id"/>
+        <result property="picPath" column="picpath"/>
+    </resultMap>
+
+    <select id="selectClub" parameterType="int" resultMap="clubMap">
+        SELECT * FROM club_info WHERE club_id=#{clubId}
+    </select>
+
+    <insert id="createClub" >
+        INSERT ignore into club_info (club_name,description,members,university_id,category_id,picpath) VALUES (#{name},#{desc},0,1,#{categoryId},#{path})
+    </insert>
+
+    <select id="getClubIdByName" resultType="int">
+        SELECT club_id FROM club_info where club_name = #{name}
+    </select>
+
+</mapper>

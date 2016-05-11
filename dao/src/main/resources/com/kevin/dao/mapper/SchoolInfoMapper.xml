@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kevin.dao.SchoolInfoDAO">
+
+    <resultMap id="schoolMap" type="SchoolInfo">
+        <id property="id" column="school_id"/>
+        <result property="name" column="school_name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+        <result property="picPath" column="picpath"/>
+    </resultMap>
+
+    <select id="selectSchoolInfo" parameterType="int" resultMap="schoolMap">
+        SELECT * FROM school_info WHERE school_id=#{schoolId}
+    </select>
+</mapper>

@@ -1,0 +1,92 @@
+package com.kevin.framework.generate.message;
+
+//option java_package = "com.alibaba.base.wap.api.message";
+//option java_outer_classname = "CommPackageProtos";
+
+/**
+ * 类 名: CommPackageProtos<br/>
+ * 描 述: 客户端到服务端的通信协议Protos<br/>
+ * 作 者: 熊伟伦<br/>
+ * 创 建: 2015年8月18日<br/>
+ *
+ * 历 史: (版本) 作者 时间 注释
+ */
+
+//Api调用入参数据对象
+message ApiCallPacket {
+	required int32 request_no = 1 default 1;
+	required string api_name = 2;
+	optional bytes parameter = 3;
+}
+
+//Api调用出参数据对象
+message ApiResultPacket {
+	required int32 request_no = 1; // 与ApiCallPacket.request_no对应
+	required int32 error_code = 2;
+	optional string error_message = 3;
+	optional bytes value = 4;
+}
+
+//一次Api请求数据包
+message ApiRequestPacket {
+	repeated ApiCallPacket api_calls = 1; // 待调用的
+	optional string ltsid = 2; // 长效SessionID
+	optional HandShakePacket handshake = 3; // 握手信息。如果还没有ltsid，可以添加此信息，进行握手，获取ltsid；如果有ltsid，则此信息忽略.
+	optional RequestHeaderPacket header = 4; // 每次api调用，可选添加
+
+	optional int32 api_ver = 5 default 1; // 表示协议版本号， 版本2起，请求必须加签
+	optional int64 timestamp = 6; // 当前时间戳, UTC 1970-1-1 0时起到现在时刻的毫秒数
+
+	optional string app_key = 101; // 新api的appKey
+	optional string sign = 102; // 签名串, StringUtils.upperCase(DigestUtils.md5Hex(appSecret + new String(serializer.serialize(apiRequestSignData), "ISO-8859-1") + appSecret))
+}
+
+message ApiRequestSignData {
+	repeated ApiCallPacket api_calls = 1;
+	optional string ltsid = 2;
+	optional HandShakePacket handshake = 3;
+	optional RequestHeaderPacket header = 4;
+	optional int32 api_ver = 5;
+	optional int64 timestamp = 6;
+}
+
+message ApiResponsePacket {
+	repeated ApiResultPacket api_results = 1;
+	optional string ltsid = 2; // 如果请求中没有ltsid，且有握手，则创建新ltsid；否则，返回请求中的ltsid
+	optional int32 error_code = 3;
+	optional string error_message = 4;
+}
+
+/*
+ * 握手信息，创建长效Session使用.
+ */
+message HandShakePacket {
+	optional string serial_no = 1;
+	optional string mac = 2;
+	optional string imei = 3;
+	optional string imsi = 4;
+	optional string resolution = 5;
+	optional string density = 6;
+	optional int32 screen_width = 7;
+	optional int32 screen_height = 8;
+}
+
+message RequestHeaderPacket {
+	optional string device_id = 1;
+	optional string producer = 2;
+	optional string model = 3;
+	optional string firmware = 4;
+	optional string os_type = 5;
+	optional string os_ver = 6;
+	optional string udid = 7; // 对于iOS，传UDID；对于Android，传AndroidId
+	optional int32 client_ver = 8; // 客户端版本号
+	optional string ttid = 9; // 渠道号
+	optional int64 first_installed_at = 10; // 初次安装时间
+	optional int64 last_installed_at = 11; // 上次安装时间
+	optional int64 first_activated_at = 12; // 第一次启动时间
+	optional string network = 13; // 网络接入形式
+	optional string location = 14; // 位置信息, JSON格式
+	optional string app_key = 15; // 应用的appKey
+	optional string tao_sid = 16; // 淘宝sid
+	optional string tao_ecode = 17; // 淘宝ecode
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kevin.dao.CommunityDAO">
+
+    <resultMap id="communityMap" type="CommunityInfo">
+        <id property="id" column="community_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="memberNums" column="members"/>
+        <result property="picPath" column="picpath"/>
+    </resultMap>
+
+    <select id="selectCommunityInfo" parameterType="int" resultMap="communityMap">
+        SELECT * FROM community_info WHERE community_id=#{communityId}
+    </select>
+</mapper>
